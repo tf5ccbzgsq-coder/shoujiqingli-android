@@ -1,0 +1,30 @@
+# ============================================================
+# 复制本文件为 local.properties（同名，放在工程根目录）再填你自己的密钥。
+# local.properties 不要提交到 git、不要随源码打包外发！
+#
+# 不填也能编译通过，但对应功能不可用：
+#   应用内更新（loadly）/ 推荐页（蒲公英）/ 在线病毒库
+# ============================================================
+
+# Android SDK 路径（Android Studio 一般会自动写入）
+sdk.dir=/your/android/sdk/path
+
+# loadly.io 分发（App 内检查更新 / 下载 / 安装）：https://loadly.io
+LOADLY_API_KEY=
+LOADLY_APP_KEY=
+LOADLY_SHORTCUT=
+
+# 蒲公英分发（「开发者的其他 App」推荐页数据源）：https://www.pgyer.com
+PGYER_API_KEY=
+PGYER_APP_KEY=
+
+# abuse.ch MalwareBazaar 的免费 Auth-Key（在线病毒库；不填则只能本地比对）
+MB_AUTH_KEY=
+
+# 自定义病毒库清单地址（可选，文本清单：每行 sha256[,家族[,文件名]]）
+VIRUS_FEED_URL=
+
+# 签名库口令（release 打包用；keystore 请自行生成并保管）
+KEYSTORE_STORE_PASSWORD=
+KEYSTORE_KEY_PASSWORD=
+KEYSTORE_KEY_ALIAS=calendar

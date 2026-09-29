@@ -1,0 +1,19 @@
+# 构建产物
+build/
+.gradle/
+*.apk
+*.aab
+captures/
+
+# 本机配置（含密钥，绝不提交）
+local.properties
+
+# 签名文件（自己生成并保管，绝不提交）
+*.keystore
+*.jks
+
+# IDE / 系统
+.idea/
+*.iml
+.DS_Store
+Thumbs.db

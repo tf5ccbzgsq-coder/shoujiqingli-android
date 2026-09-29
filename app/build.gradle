@@ -1,0 +1,88 @@
+plugins {
+    id 'com.android.application'
+}
+
+// 敏感信息从 local.properties 读取（该文件不随源码分发）
+def localProps = new Properties()
+def localPropsFile = rootProject.file('local.properties')
+if (localPropsFile.exists()) {
+    localPropsFile.withInputStream { localProps.load(it) }
+}
+def secret = { String key -> localProps.getProperty(key, "") }
+
+// 更新服务密钥以「异或 + Base64」形式写进 BuildConfig，避免被 strings/反编译直接抓到明文
+def xorMask = 0x5A
+def enc = { String s ->
+    if (s == null || s.isEmpty()) return ""
+    byte[] b = s.getBytes("UTF-8")
+    for (int i = 0; i < b.length; i++) { b[i] = (byte) (b[i] ^ xorMask) }
+    return java.util.Base64.getEncoder().encodeToString(b)
+}
+
+android {
+    namespace 'com.cleaner.app'
+    // 面向 Android 16（API 36）适配；Android 11（API 30）为最低支持配置
+    compileSdk 36
+
+    defaultConfig {
+        applicationId "com.cleaner.app"
+        minSdk 30
+        targetSdk 36
+        versionCode 8
+        versionName "1.5.0"
+
+        // Loadly.io 分发（App 内更新检查 / 下载 / 安装）
+        buildConfigField "String", "LOADLY_API_KEY_ENC", "\"${enc(secret('LOADLY_API_KEY'))}\""
+        buildConfigField "String", "LOADLY_APP_KEY_ENC", "\"${enc(secret('LOADLY_APP_KEY'))}\""
+        buildConfigField "String", "LOADLY_SHORTCUT", "\"${secret('LOADLY_SHORTCUT')}\""
+
+        // 开发者其他 App（蒲公英账号）——用于「更多 App」推荐页
+        buildConfigField "String", "PGY_API_KEY", "\"${secret('PGYER_API_KEY')}\""
+        buildConfigField "String", "PGY_APP_KEY", "\"${secret('PGYER_APP_KEY')}\""
+
+        // 病毒库数据源（abuse.ch MalwareBazaar）：Auth-Key 可打包内置，也可在 App 内填写
+        buildConfigField "String", "MB_AUTH_KEY", "\"${secret('MB_AUTH_KEY')}\""
+        buildConfigField "String", "VIRUS_FEED_URL", "\"${secret('VIRUS_FEED_URL')}\""
+    }
+
+    signingConfigs {
+        release {
+            // 签名文件与口令都不随源码分发：keystore 请自行生成并保管，
+            // 口令填在构建机的 local.properties（KEYSTORE_STORE_PASSWORD / KEYSTORE_KEY_PASSWORD / KEYSTORE_KEY_ALIAS）
+            storeFile file('../cleaner.keystore')
+            storePassword secret('KEYSTORE_STORE_PASSWORD')
+            keyAlias secret('KEYSTORE_KEY_ALIAS') ?: 'calendar'
+            keyPassword secret('KEYSTORE_KEY_PASSWORD')
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    // 关闭 release lint（省编译时间与磁盘；发布前靠人工回归）
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+}
