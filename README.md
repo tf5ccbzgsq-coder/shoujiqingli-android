@@ -57,6 +57,17 @@
 - 清理前均二次确认；「应用专清」只匹配 cache / code_cache / temp / log / thumbnails 这类缓存目录名
 - 未做代码混淆（`minifyEnabled false`），方便阅读与二次开发
 
+## 版本历史
+
+| 版本 | 日期 | 主要更新 |
+|---|---|---|
+| **v1.5.0** | 2026-09-29 | 新增「应用专清」（按应用清缓存）、首页「分类文件」区块、底部「我的」页 |
+| v1.4.1 | 2026-09-27 | 新增「开发者的其他 App」推荐页；补齐传统图标；目标版本 Android 16 |
+| v1.4.0 | 2026-09-25 | 内置播放器（音乐 / 视频 / 照片）、按来源占用分析、病毒扫描工具 |
+| v1.3.0 | 2026-09-25 | 修复媒体读取失败（权限 + MediaStore 直读 + 播放队列改用静态引用） |
+
+> 安装包在 [Releases](https://github.com/tf5ccbzgsq-coder/shoujiqingli-android/releases) 与蒲公英分发页 <https://www.pgyer.com/shoujiqingli-android>。
+
 ## 许可
 
 未附许可证文件（作者保留权利）。如需开放使用，可加 MIT 或 Apache-2.0，告知即可。
